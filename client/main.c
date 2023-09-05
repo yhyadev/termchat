@@ -1,13 +1,17 @@
 #include "main.h"
 
+#include "vector.h"
+
 #include <curses.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(void) {
 	initscr();
-	clear();
+	noecho();
 	read_messages();
-	setup_input();
-	refresh();
+	WINDOW *input_win = setup_input();
+	capture_input(input_win);
 	endwin();
 }
 
@@ -19,11 +23,50 @@ void read_messages() {
 	wrefresh(messages_win);
 }
 
-void setup_input() {
+WINDOW *setup_input() {
 	WINDOW *input_win = newwin(3, 0, LINES - 3, 0);
 
-    box(input_win, 0, 0);
-    mvwprintw(input_win, 0, 0, "Input");
-    wmove(input_win, 1, 1);
-    wgetch(input_win);
+	box(input_win, 0, 0);
+	mvwprintw(input_win, 0, 0, "Input");
+	wmove(input_win, 1, 1);
+
+	return input_win;
+}
+
+void capture_input(WINDOW *input_win) {
+	nodelay(input_win, 1);
+
+	char_vector *buffer = init_char_vec();
+
+	if (buffer == NULL)
+		printf("You need to be more reach brother");
+
+	while (1) {
+        /*
+        wclear(input_win);
+		for (int i = 0; i <= buffer->size; i++) {
+			if (buffer->values[i]) {
+				waddch(input_win, buffer->values[i]);
+			}
+		}
+		wrefresh(input_win);
+        */
+
+		int key = wgetch(input_win);
+
+		if (key == ERR) {
+			continue;
+		} else if (key == 13 || key == 10) {
+			if (buffer->size == 0)
+				continue;
+		} else if (key == 8 || key == 121) {
+			if (buffer->size == 0)
+				continue;
+			pop(buffer);
+		} else {
+			push(buffer, key);
+		}
+
+		napms(1000);
+	}
 }

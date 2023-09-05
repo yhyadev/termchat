@@ -1,2 +1,5 @@
+#include <curses.h>
+
 void read_messages();
-void setup_input();
+WINDOW *setup_input();
+void capture_input(WINDOW *input_win);
