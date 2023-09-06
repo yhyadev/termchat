@@ -1,25 +1,14 @@
-import tornado.ioloop
-import tornado.escape
-import tornado.web
-import tornado.websocket
+import socket
 
-class ConnectionManager (tornado.websocket.WebSocketHandler):
-    def open(self):
-        print("New user connected") 
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    s.bind(("127.0.0.1", 8080))
+    s.listen()
 
-    def on_message(self, message):
-        data = tornado.escape.json_encode(message)
-
-        self.write_message(data)
+    conn, addr = s.accept()
     
+    with conn:
+        print(f"User Connected")
 
-    def on_close(self):
-        print("We lost a user")
-
-
-applcation = tornado.web.Application([
-    (r"/", ConnectionManager)
-])
-
-applcation.listen(8080)
-tornado.ioloop.IOLoop.instance().start()
+        while True:
+            data = conn.recv(1024)
+            conn.sendall(data)

@@ -1,9 +1,9 @@
-all: c python 
+all: cpp python 
 
 python:
 	python3 ./server/main.py
 
-c:
-	gcc ./client/* -lncurses
+cpp:
+	g++ ./client/*.cpp -lncurses
 	mkdir -p bin
 	mv a.out ./bin/termchat
