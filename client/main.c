@@ -9,21 +9,29 @@
 int main(void) {
 	initscr();
 	noecho();
-	read_messages();
-	WINDOW *input_win = setup_input();
+
+	WINDOW *messages_win = setup_messages_window();
+	read_messages(messages_win);
+
+	WINDOW *input_win = setup_input_window();
 	capture_input(input_win);
+
 	endwin();
 }
 
-void read_messages() {
+WINDOW *setup_messages_window() {
 	WINDOW *messages_win = newwin(LINES - 3, 0, 0, 0);
 
 	box(messages_win, 0, 0);
 	mvwprintw(messages_win, 0, 0, "Messages");
 	wrefresh(messages_win);
+
+	return messages_win;
 }
 
-WINDOW *setup_input() {
+void read_messages(WINDOW *messages_win) {}
+
+WINDOW *setup_input_window() {
 	WINDOW *input_win = newwin(3, 0, LINES - 3, 0);
 
 	box(input_win, 0, 0);
@@ -42,15 +50,15 @@ void capture_input(WINDOW *input_win) {
 		printf("You need to be more reach brother");
 
 	while (1) {
-        /*
-        wclear(input_win);
+		/*
+		wclear(input_win);
 		for (int i = 0; i <= buffer->size; i++) {
 			if (buffer->values[i]) {
 				waddch(input_win, buffer->values[i]);
 			}
 		}
 		wrefresh(input_win);
-        */
+		*/
 
 		int key = wgetch(input_win);
 
