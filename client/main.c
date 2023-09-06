@@ -42,24 +42,13 @@ WINDOW *setup_input_window() {
 }
 
 void capture_input(WINDOW *input_win) {
-	nodelay(input_win, 1);
-
+	WINDOW *typed_input_win = newwin(1, 0, LINES - 2, 1);
 	char_vector *buffer = init_char_vec();
 
-	if (buffer == NULL)
+	if (buffer == NULL || buffer->values == NULL)
 		printf("You need to be more reach brother");
 
 	while (1) {
-		/*
-		wclear(input_win);
-		for (int i = 0; i <= buffer->size; i++) {
-			if (buffer->values[i]) {
-				waddch(input_win, buffer->values[i]);
-			}
-		}
-		wrefresh(input_win);
-		*/
-
 		int key = wgetch(input_win);
 
 		if (key == ERR) {
@@ -67,7 +56,7 @@ void capture_input(WINDOW *input_win) {
 		} else if (key == 13 || key == 10) {
 			if (buffer->size == 0)
 				continue;
-		} else if (key == 8 || key == 121) {
+		} else if (key == 8 || key == 127) {
 			if (buffer->size == 0)
 				continue;
 			pop(buffer);
@@ -75,6 +64,15 @@ void capture_input(WINDOW *input_win) {
 			push(buffer, key);
 		}
 
-		napms(1000);
+		wclear(typed_input_win);
+		for (int i = 0; i < buffer->size; i++) {
+			if (buffer->values[i]) {
+				waddch(typed_input_win, buffer->values[i]);
+			}
+		}
+		wrefresh(typed_input_win);
 	}
+
+	free(buffer->values);
+	free(buffer);
 }

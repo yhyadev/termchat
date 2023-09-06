@@ -5,25 +5,26 @@
 char_vector *init_char_vec() {
 	char_vector *vec = malloc(sizeof(char_vector));
 
-	vec->values = malloc(sizeof(char));
 	vec->size = 0;
-	vec->capacity = 1;
+    vec->capacity = 10;
+    
+	vec->values = malloc(vec->capacity * sizeof(char));
 
 	return vec;
 }
 
 void push(char_vector *vec, char value) {
-	if (vec->size > vec->capacity) {
-		vec->values = realloc(vec->values, vec->capacity * sizeof(char));
-		vec->capacity *= 2;
-	}
+    if (vec->size == vec->capacity) {
+        vec->capacity *= 2;
+        vec->values = realloc(vec->values, vec->capacity * sizeof(char));
+    }
 
-	vec->values[vec->size] = value;
-	vec->size++;
+    vec->values[vec->size] = value;
+    vec->size++;
 }
 
 void pop(char_vector *vec) {
-	vec->size--;
-	vec->capacity /= 2;
-	vec->values = realloc(vec->values, vec->capacity * sizeof(char));
+	if (vec->size > 0) {
+		vec->size--;
+	}
 }
